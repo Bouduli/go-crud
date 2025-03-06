@@ -30,16 +30,23 @@ func (r *Router) GET(url string, handler http.HandlerFunc) {
 	r.Mux.HandleFunc(route, handler)
 }
 
-//TODO: continue with these
-// func (r *Router) POST(url string, handler http.HandlerFunc) {
-// 	r.Mux.HandleFunc(url, handler)
-// }
-// func (r *Router) DELETE(url string, handler http.HandlerFunc) {
-// 	r.Mux.HandleFunc(url, handler)
-// }
-// func (r *Router) PUT(url string, handler http.HandlerFunc) {
-// 	r.Mux.HandleFunc(url, handler)
-// }
+func (r *Router) POST(url string, handler http.HandlerFunc) {
+	route := methodRoute("POST", url)
+
+	r.Mux.HandleFunc(route, handler)
+}
+
+func (r *Router) DELETE(url string, handler http.HandlerFunc) {
+	route := methodRoute("DELETE", url)
+
+	r.Mux.HandleFunc(route, handler)
+}
+
+func (r *Router) PUT(url string, handler http.HandlerFunc) {
+	route := methodRoute("PUT", url)
+
+	r.Mux.HandleFunc(route, handler)
+}
 
 // allows the Mux to serve for an entire "route"
 func (r *Router) Serve() http.Handler {
