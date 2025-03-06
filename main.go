@@ -12,16 +12,19 @@ import (
 
 var TODOs = []types.Note{
 	{
+		Id:     uuid.New().String(),
 		Title:  "Title1",
 		Text:   "message",
 		Author: uuid.New().String(),
 	},
 	{
+		Id:     uuid.New().String(),
 		Title:  "Title2",
 		Text:   "message",
 		Author: uuid.New().String(),
 	},
 	{
+		Id:     uuid.New().String(),
 		Title:  "Title3",
 		Text:   "message",
 		Author: uuid.New().String(),
@@ -33,8 +36,36 @@ func main() {
 
 	todoRouter := router.NewRouter("/todo")
 	todoRouter.GET("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		jsonWriter := json.NewEncoder(w)
 
-		fmt.Fprintln(w, "todo index")
+		jsonWriter.Encode(TODOs)
+	})
+	todoRouter.GET("/{id}", func(w http.ResponseWriter, r *http.Request) {
+		param := r.PathValue("id")
+
+		var TODO *types.Note
+		for i := range TODOs {
+			if TODOs[i].Id == param {
+				TODO = &TODOs[i]
+			}
+		}
+
+		if TODO != nil {
+
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(TODO)
+		} else {
+			w.Header().Set("Content-Type", "application/problem+json")
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(types.ProblemJson{
+				Type:   "example.com/not-found",
+				Status: http.StatusNotFound,
+				Title:  "not found",
+				Detail: fmt.Sprintf("A TODO with id \"%s\" wasnt found", param),
+			})
+		}
+
 	})
 	todoRouter.GET("/what", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "something else")
@@ -42,12 +73,7 @@ func main() {
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
-		w.Header().Set("Content-Type", "application/json")
-		jsonWriter := json.NewEncoder(w)
-
-		if err := jsonWriter.Encode(TODOs); err != nil {
-			http.Error(w, "unable to stringify stuff", http.StatusInternalServerError)
-		}
+		fmt.Fprintln(w, "index, html coming soon!")
 
 	})
 
