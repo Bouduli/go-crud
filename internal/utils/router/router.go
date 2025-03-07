@@ -19,31 +19,32 @@ type Router struct {
 	Mux    *http.ServeMux
 }
 
+// prefixes resource with provided PREFIX method
 func methodRoute(method string, resource string) string {
 	return fmt.Sprintf("%s %s", method, resource)
 }
 
 func (r *Router) GET(url string, handler http.HandlerFunc) {
 
-	route := methodRoute("GET", url)
+	route := methodRoute(http.MethodGet, url)
 
 	r.Mux.HandleFunc(route, handler)
 }
 
 func (r *Router) POST(url string, handler http.HandlerFunc) {
-	route := methodRoute("POST", url)
+	route := methodRoute(http.MethodPost, url)
 
 	r.Mux.HandleFunc(route, handler)
 }
 
 func (r *Router) DELETE(url string, handler http.HandlerFunc) {
-	route := methodRoute("DELETE", url)
+	route := methodRoute(http.MethodDelete, url)
 
 	r.Mux.HandleFunc(route, handler)
 }
 
 func (r *Router) PUT(url string, handler http.HandlerFunc) {
-	route := methodRoute("PUT", url)
+	route := methodRoute(http.MethodPut, url)
 
 	r.Mux.HandleFunc(route, handler)
 }
