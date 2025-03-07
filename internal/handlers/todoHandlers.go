@@ -88,6 +88,17 @@ func (h *TodoHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	TODO.Id = uuid.NewString()
 
+	valid := TODO.Validate()
+	if !valid.Ok {
+		utils.Response{W: w}.Status(http.StatusBadRequest).ProblemJson(types.ProblemJson{
+			Type:   "example.com/bad-request",
+			Status: http.StatusBadRequest,
+			Title:  "Invalid TODO",
+			Detail: fmt.Sprintf("TODO is missing required properties: %v", valid.ErrorFields),
+		})
+		return
+	}
+
 	TODOs = append(TODOs, TODO)
 
 	w.WriteHeader(http.StatusCreated)
