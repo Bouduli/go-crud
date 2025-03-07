@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-crud/internal/types"
+	utils "go-crud/internal/utils/response"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -60,9 +61,7 @@ func (h *TodoHandler) Show(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(TODO)
 	} else {
-		w.Header().Set("Content-Type", "application/problem+json")
-		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(types.ProblemJson{
+		utils.Response{W: w}.Status(http.StatusNotFound).ProblemJson(types.ProblemJson{
 			Type:   "example.com/not-found",
 			Status: http.StatusNotFound,
 			Title:  "not found",
@@ -70,4 +69,27 @@ func (h *TodoHandler) Show(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+}
+
+// Create
+//
+// POST /
+func (h *TodoHandler) Create(w http.ResponseWriter, r *http.Request) {
+
+	//limit the size of request-body (trying to parse larger files result in error)
+	r.Body = http.MaxBytesReader(w, r.Body, 1048576)
+
+	var TODO types.Note
+	if err := json.NewDecoder(r.Body).Decode(&TODO); err != nil {
+
+		utils.Response{W: w}.ErrorMap(err)
+		return
+	}
+
+	TODO.Id = uuid.NewString()
+
+	TODOs = append(TODOs, TODO)
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(TODO)
 }
