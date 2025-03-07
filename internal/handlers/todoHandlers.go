@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-crud/internal/types"
-	utils "go-crud/internal/utils/response"
+	utils "go-crud/internal/utils"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -61,6 +61,7 @@ func (h *TodoHandler) Show(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(TODO)
 	} else {
+
 		utils.Response{W: w}.Status(http.StatusNotFound).ProblemJson(types.ProblemJson{
 			Type:   "example.com/not-found",
 			Status: http.StatusNotFound,
