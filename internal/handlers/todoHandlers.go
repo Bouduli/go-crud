@@ -103,5 +103,46 @@ func (h *TodoHandler) Create(w http.ResponseWriter, r *http.Request) {
 	TODOs = append(TODOs, TODO)
 
 	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(TODO)
+}
+
+
+func (h *TodoHandler) Delete(w http.ResponseWriter, r *http.Request) {
+
+	id := r.PathValue("id")
+
+	var TODO *types.Note
+	for i, val := range TODOs {
+		if id == val.Id {
+			TODO = &TODOs[i]
+		}
+	}
+
+	if TODO == nil {
+		utils.Response{W: w}.Status(http.StatusNotFound).ProblemJson(types.ProblemJson{
+			Type:   "example.com/not-found",
+			Title:  "Not found",
+			Status: http.StatusNotFound,
+			Detail: "resource requested for delete wasn't found",
+		})
+		return
+	} else {
+		TODOs = utils.Filter(TODOs, func(t types.Note, ind int) bool {
+			return t.Id != id
+		})
+
+		if err := json.NewEncoder(w).Encode(map[string]string{
+			"id": id,
+		}); err != nil {
+			utils.Response{W: w}.ErrorMap(err)
+			return
+		} else {
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+
+		}
+
+	}
 }
