@@ -18,4 +18,5 @@ func init() {
 	TodoRouter.GET("/{id}", TodoHandler.Show)
 	TodoRouter.POST("/", TodoHandler.Create)
 	TodoRouter.DELETE("/{id}", TodoHandler.Delete)
+	TodoRouter.PUT("/{id}", TodoHandler.Update)
 }

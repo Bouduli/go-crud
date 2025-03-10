@@ -5,4 +5,6 @@ type ProblemJson struct {
 	Title  string `json:"title"`
 	Detail string `json:"detail"`
 	Status int    `json:"status"`
+
+	Context map[string]any `json:"context"`
 }
