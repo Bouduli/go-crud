@@ -158,13 +158,10 @@ func (h *TodoHandler) Update(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(TODO); err != nil {
 			utils.Response{W: w}.ErrorMap(err)
 			return
-		} else {
-			w.WriteHeader(http.StatusOK)
-			w.Header().Set("Content-Type", "application/json")
-
 		}
 	}
 }
@@ -196,16 +193,12 @@ func (h *TodoHandler) Delete(w http.ResponseWriter, r *http.Request) {
 			return t.Id != id
 		})
 
+		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(map[string]string{
 			"id": id,
 		}); err != nil {
 			utils.Response{W: w}.ErrorMap(err)
 			return
-		} else {
-
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-
 		}
 
 	}
