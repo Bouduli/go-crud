@@ -14,9 +14,9 @@ func (n Note) Validate() validationError {
 	v := reflect.ValueOf(n)
 	t := reflect.TypeOf(n)
 
-	var response validationError
+	var response = validationError{Ok: true}
 
-	for i := range v.NumField() {
+	for i := 0; i < v.NumField(); i++ {
 		fieldName := t.Field(i).Name
 		value := v.Field(i)
 
